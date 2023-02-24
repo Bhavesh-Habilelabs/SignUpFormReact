@@ -1,25 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { FormInput } from "./formInput";
+import { inputs } from "./inputData"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export const App = () => {
+	const [submitted, setSubmitted] = useState('')
 
-export default App;
+	const [values, setValues] = useState({
+		fullname: "",
+		email: "",
+		phone: "",
+		pass: "",
+		confPass: ""
+	});
+
+	const [valid, setValid] = useState({
+		fullname: 1,
+		email: 1,
+		phone: 1,
+		pass: 1,
+		confPass: 1,
+	})
+
+	const handleSubmit = (e) => {
+		e.preventDefault()
+
+		Object.values(valid).every((v) => v === true)
+			? setSubmitted("Submitted Successfully!") || document.getElementById("myForm").reset()
+			: setSubmitted("Error!") ||
+			setValid({
+				fullname: true,
+				email: true,
+				phone: true,
+				pass: true,
+				confPass: true
+			})
+	}
+
+	
+	const handleChange = (e) => {
+		setValues({
+			...values,
+			[e.target.name]: e.target.value
+		})
+	}
+
+	return (
+		<div className="app">
+			<form onSubmit={handleSubmit} id="myForm">
+				<p>{submitted}</p>
+
+				{inputs.map((input) => (
+					<FormInput
+						{...input}
+						key={input.id}
+						value={values[input.name]}
+						onChange={handleChange}
+						valid={valid}
+						setValid={setValid}
+					/>
+				))}
+
+					<button type="submit">Submit</button>
+			</form>
+		</div>
+	);
+};
